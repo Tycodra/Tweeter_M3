@@ -64,19 +64,20 @@ public abstract class PagedTask<T> extends AuthenticatedTask {
     }
 
     @Override
-    protected final void runTask() throws IOException {
-        Pair<List<T>, Boolean> pageOfItems = getItems();
+    protected final void runTask() throws Exception {
+        try {
+            Pair<List<T>, Boolean> pageOfItems = getItems();
 
-        items = pageOfItems.getFirst();
-        hasMorePages = pageOfItems.getSecond();
+            items = pageOfItems.getFirst();
+            hasMorePages = pageOfItems.getSecond();
 
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
+            sendSuccessMessage();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
-    protected abstract Pair<List<T>, Boolean> getItems();
+    protected abstract Pair<List<T>, Boolean> getItems() throws Exception;
 
     protected abstract List<User> getUsersForItems(List<T> items);
 

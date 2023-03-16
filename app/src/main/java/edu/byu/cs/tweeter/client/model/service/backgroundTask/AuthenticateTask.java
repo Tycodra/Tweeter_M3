@@ -37,10 +37,10 @@ public abstract class AuthenticateTask extends BackgroundTask {
 
     @Override
     protected final void runTask()  throws IOException {
-        Pair<User, AuthToken> loginResult = runAuthenticationTask();
+        Pair<User, AuthToken> result = runAuthenticationTask();
 
-        authenticatedUser = loginResult.getFirst();
-        authToken = loginResult.getSecond();
+        authenticatedUser = result.getFirst();
+        authToken = result.getSecond();
 
         // Call sendSuccessMessage if successful
         sendSuccessMessage();

@@ -1,6 +1,8 @@
 package edu.byu.cs.tweeter.server.service;
 
+import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.server.service.dao.FollowDAO;
 
@@ -24,7 +26,16 @@ public class FollowService {
         } else if(request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getFollowingDAO().getFollowees(request);
+        return getFollowDAO().getFollowees(request);
+    }
+
+    public FollowersResponse getFollowers(FollowersRequest request) {
+        if (request.getTargetUserAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a targetUser alias");
+        } else if (request.getLimit() <= 0) {
+            throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
+        }
+        return getFollowDAO().getFollowers(request);
     }
 
     /**
@@ -34,7 +45,7 @@ public class FollowService {
      *
      * @return the instance.
      */
-    FollowDAO getFollowingDAO() {
+    FollowDAO getFollowDAO() {
         return new FollowDAO();
     }
 }
