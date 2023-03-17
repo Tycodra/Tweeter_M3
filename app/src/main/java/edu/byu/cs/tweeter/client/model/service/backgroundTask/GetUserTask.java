@@ -2,15 +2,19 @@ package edu.byu.cs.tweeter.client.model.service.backgroundTask;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.GetUserRequest;
+import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
 
 /**
  * Background task that returns the profile for a specified user.
  */
 public class GetUserTask extends AuthenticatedTask {
-
+    private static final String URL_PATH = "/getuser";
+    private static final String LOG_TAG = "getUserTask";
     public static final String USER_KEY = "user";
 
     /**
@@ -26,13 +30,20 @@ public class GetUserTask extends AuthenticatedTask {
     }
 
     @Override
-    protected void runTask() {
-        user = getUser();
+    protected void runTask() throws Exception {
+        try {
+            GetUserRequest request = new GetUserRequest(alias, getAuthToken());
+            GetUserResponse response = getServerFacade().getUser(request, URL_PATH);
 
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
+            if (response.isSuccess()) {
+                user = response.getUser();
+            } else {
+                throw new Exception(response.getMessage());
+            }
+        } catch (Exception ex) {
+            Log.e(LOG_TAG, ex.getMessage(), ex);
+            throw ex;
+        }
     }
 
     @Override
@@ -40,7 +51,7 @@ public class GetUserTask extends AuthenticatedTask {
         msgBundle.putSerializable(USER_KEY, user);
     }
 
-    private User getUser() {
-        return getFakeData().findUserByAlias(alias);
-    }
+//    private User getUser() {
+//        return getFakeData().findUserByAlias(alias);
+//    }
 }
