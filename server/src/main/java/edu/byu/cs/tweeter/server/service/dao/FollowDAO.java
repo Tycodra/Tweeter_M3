@@ -6,7 +6,9 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -22,15 +24,15 @@ public class FollowDAO {
      * @param follower the User whose count of how many following is desired.
      * @return said count.
      */
-    public Integer getFolloweeCount(User follower) {
+    public FollowingCountResponse getFollowingCount(User follower) {
         // TODO: uses the dummy data.  Replace with a real implementation.
         assert follower != null;
-        return getDummyFollowees().size();
+        return new FollowingCountResponse(getDummyFollowees().size());
     }
 
-    public Integer getFollowerCount(User targetUser) {
+    public FollowersCountResponse getFollowerCount(User targetUser) {
         assert targetUser != null;
-        return getDummyFollowers().size();
+        return new FollowersCountResponse(getDummyFollowers().size());
     }
 
     /**

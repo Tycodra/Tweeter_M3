@@ -1,8 +1,12 @@
 package edu.byu.cs.tweeter.server.service;
 
+import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
+import edu.byu.cs.tweeter.model.net.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.server.service.dao.FollowDAO;
 
@@ -38,6 +42,19 @@ public class FollowService {
         return getFollowDAO().getFollowers(request);
     }
 
+    public FollowingCountResponse getFollowingCount(FollowingCountRequest request) {
+        if (request.getTargetUser() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a targetUser alias");
+        }
+        return getFollowDAO().getFollowingCount(request.getTargetUser());
+    }
+
+    public FollowersCountResponse getFollowersCount(FollowersCountRequest request) {
+        if (request.getTargetUser() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a targetUser alias");
+        }
+        return getFollowDAO().getFollowerCount(request.getTargetUser());
+    }
     /**
      * Returns an instance of {@link FollowDAO}. Allows mocking of the FollowDAO class
      * for testing purposes. All usages of FollowDAO should get their FollowDAO

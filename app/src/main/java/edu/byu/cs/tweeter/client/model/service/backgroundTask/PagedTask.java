@@ -71,7 +71,7 @@ public abstract class PagedTask<T> extends AuthenticatedTask {
             items = pageOfItems.getFirst();
             hasMorePages = pageOfItems.getSecond();
 
-            sendSuccessMessage();
+//            sendSuccessMessage();
         } catch (Exception e) {
             throw e;
         }

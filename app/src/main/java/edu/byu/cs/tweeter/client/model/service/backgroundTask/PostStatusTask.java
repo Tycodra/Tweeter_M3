@@ -27,7 +27,8 @@ public class PostStatusTask extends AuthenticatedTask {
         // eventually access the database from here when we aren't using dummy data.
 
         // Call sendSuccessMessage if successful
-        sendSuccessMessage();
+        // sendSuccessMessage();
+
         // or call sendFailedMessage if not successful
         // sendFailedMessage()
     }
