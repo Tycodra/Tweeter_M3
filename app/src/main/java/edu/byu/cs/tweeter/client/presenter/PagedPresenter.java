@@ -2,7 +2,6 @@ package edu.byu.cs.tweeter.client.presenter;
 
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.GetUserObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedTaskObserver;
 import edu.byu.cs.tweeter.model.domain.User;

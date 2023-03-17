@@ -16,7 +16,6 @@ import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.SimpleNoti
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.CountObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.IsFollowerObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.PagedTaskObserver;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.ServiceObserver;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.observer.SimpleNotificationObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 

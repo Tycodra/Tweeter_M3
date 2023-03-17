@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.IOException;
-
 import edu.byu.cs.tweeter.client.model.service.net.ServerFacade;
 import edu.byu.cs.tweeter.util.FakeData;
 
