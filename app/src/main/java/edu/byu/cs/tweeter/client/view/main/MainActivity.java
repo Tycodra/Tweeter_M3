@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void isFollower(boolean isFollower) {
-        if (isFollower) {
+        if (!isFollower) {
             followButton.setText(R.string.follow);
             followButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         } else {

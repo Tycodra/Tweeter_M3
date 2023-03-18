@@ -1,16 +1,20 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.Random;
+
 import edu.byu.cs.tweeter.model.net.request.FollowRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.UnfollowRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
 import edu.byu.cs.tweeter.server.service.dao.FollowDAO;
 
@@ -35,6 +39,19 @@ public class FollowService {
             throw new RuntimeException("[Bad Request] Request needs to have a followee");
         }
         return new UnfollowResponse();
+    }
+
+    public IsFollowerResponse isFollower(IsFollowerRequest request) {
+        if (request.getFollower() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a follower:User");
+        } else if (request.getFollowee() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a followee:User");
+        } else if (request.getAuthToken() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have an authToken");
+        }
+        boolean isFollower = new Random().nextBoolean();
+
+        return new IsFollowerResponse(isFollower);
     }
     /**
      * Returns the users that the user specified in the request is following. Uses information in
