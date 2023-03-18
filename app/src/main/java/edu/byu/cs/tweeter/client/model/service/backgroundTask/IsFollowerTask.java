@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import java.util.Random;
-
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
@@ -44,7 +42,6 @@ public class IsFollowerTask extends AuthenticatedTask {
             IsFollowerResponse response = getServerFacade().isFollower(request, URL_PATH);
 
             if (response.isSuccess()) {
-                System.out.println("Response.isFollower was: " + response.isFollower());
                 this.isFollower = response.isFollower();
             } else {
                 throw new Exception(response.getMessage());
