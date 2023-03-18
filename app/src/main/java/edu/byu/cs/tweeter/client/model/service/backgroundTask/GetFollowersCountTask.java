@@ -12,8 +12,8 @@ import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
  * Background task that queries how many followers a user has.
  */
 public class GetFollowersCountTask extends GetCountTask {
-    private static String URL_PATH = "/getfollowerscount";
-    private static String LOG_TAG = "getFollowersCount";
+    private static final String URL_PATH = "/getfollowerscount";
+    private static final String LOG_TAG = "getFollowersCountTask";
 
     public GetFollowersCountTask(AuthToken authToken, User targetUser, Handler messageHandler) {
         super(authToken, targetUser, messageHandler);
@@ -31,7 +31,7 @@ public class GetFollowersCountTask extends GetCountTask {
                 throw new Exception(response.getMessage());
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "Failed to get followers count");
+            Log.e(LOG_TAG, ex.getMessage(), ex);
             throw ex;
         }
     }

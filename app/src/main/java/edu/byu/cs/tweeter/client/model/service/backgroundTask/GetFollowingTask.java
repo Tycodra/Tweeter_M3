@@ -16,7 +16,7 @@ import edu.byu.cs.tweeter.util.Pair;
  */
 public class GetFollowingTask extends PagedUserTask {
     public static final String URL_PATH = "/getfollowing";
-    private static final String LOG_TAG = "getFollowing";
+    private static final String LOG_TAG = "getFollowingTask";
     public GetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee,
                             Handler messageHandler) {
         super(authToken, targetUser, limit, lastFollowee, messageHandler);
@@ -38,7 +38,7 @@ public class GetFollowingTask extends PagedUserTask {
                 throw new Exception(response.getMessage());
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "Failed to get followees", ex);
+            Log.e(LOG_TAG, ex.getMessage(), ex);
             throw ex;
         }
     }

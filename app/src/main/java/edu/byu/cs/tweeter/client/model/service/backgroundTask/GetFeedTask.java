@@ -17,7 +17,7 @@ import edu.byu.cs.tweeter.util.Pair;
  */
 public class GetFeedTask extends PagedStatusTask {
     public static final String URL_PATH = "/getfeed";
-    private static final String LOG_TAG = "getFeed";
+    private static final String LOG_TAG = "getFeedTask";
     public GetFeedTask(AuthToken authToken, User targetUser, int limit, Status lastStatus,
                        Handler messageHandler) {
         super(authToken, targetUser, limit, lastStatus, messageHandler);
@@ -38,7 +38,7 @@ public class GetFeedTask extends PagedStatusTask {
                 throw new Exception(response.getMessage());
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "Failed to get feed");
+            Log.e(LOG_TAG, ex.getMessage(), ex);
             throw ex;
         }
     }

@@ -41,9 +41,9 @@ public abstract class BackgroundTask implements Runnable {
 
     protected abstract void runTask() throws Exception;
 
-    protected FakeData getFakeData() {
-        return FakeData.getInstance();
-    }
+//    protected FakeData getFakeData() {
+//        return FakeData.getInstance();
+//    }
 
     /**
      * Called by a Task's runTask method when it is successful.

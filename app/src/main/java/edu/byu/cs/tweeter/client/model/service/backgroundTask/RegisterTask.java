@@ -53,8 +53,5 @@ public class RegisterTask extends AuthenticateTask {
             Log.e(LOG_TAG, ex.getMessage(), ex);
             throw ex;
         }
-//        User registeredUser = getFakeData().getFirstUser();
-//        AuthToken authToken = getFakeData().getAuthToken();
-//        return new Pair<>(registeredUser, authToken);
     }
 }

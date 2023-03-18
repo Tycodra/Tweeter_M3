@@ -17,7 +17,7 @@ import edu.byu.cs.tweeter.util.Pair;
  */
 public class GetStoryTask extends PagedStatusTask {
     private static final String URL_PATH = "/getstory";
-    private static final String LOG_TAG = "getStory";
+    private static final String LOG_TAG = "getStoryTask";
 
     public GetStoryTask(AuthToken authToken, User targetUser, int limit, Status lastStatus,
                         Handler messageHandler) {
@@ -39,7 +39,7 @@ public class GetStoryTask extends PagedStatusTask {
                 throw new Exception(response.getMessage());
             }
         } catch (Exception ex) {
-            Log.e(LOG_TAG, "Failed to get story");
+            Log.e(LOG_TAG, ex.getMessage(), ex);
             throw ex;
         }
     }
