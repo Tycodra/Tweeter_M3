@@ -5,12 +5,12 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.net.request.FeedRequest;
-import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
-import edu.byu.cs.tweeter.model.net.response.StoryResponse;
 import edu.byu.cs.tweeter.util.FakeData;
 
-public class StatusDAO {
+public class FeedDAO implements FeedDAOInterface{
+
+    @Override
     public FeedResponse getFeed(FeedRequest request) {
         assert request.getLimit() > 0;
         assert request.getUserAlias() != null;
@@ -33,26 +33,6 @@ public class StatusDAO {
 
         return new FeedResponse(responseStatuses, hasMorePages);
     }
-    public StoryResponse getStory(StoryRequest request) {
-        assert request.getLimit() > 0;
-        assert request.getUserAlias() != null;
-
-        List<Status> allStatuses = getFakeData().getFakeStatuses();
-        List<Status> responseStatuses = new ArrayList<>(request.getLimit());
-
-        boolean hasMorePages = false;
-
-        if (request.getLimit() > 0) {
-            int storyIndex = getStartingIndex(request.getLastStatus(), allStatuses);
-
-            for (int limitCounter = 0; storyIndex < allStatuses.size() && limitCounter < request.getLimit(); storyIndex++, limitCounter++) {
-                responseStatuses.add(allStatuses.get(storyIndex));
-            }
-            hasMorePages = storyIndex < allStatuses.size();
-        }
-        return new StoryResponse(responseStatuses, hasMorePages);
-    }
-
     private int getStartingIndex(Status lastStatus, List<Status> allStatuses) {
         int startingIndex = 0;
 

@@ -6,16 +6,27 @@ import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
-import edu.byu.cs.tweeter.server.service.dao.StatusDAO;
+import edu.byu.cs.tweeter.server.service.dao.AuthenticationDAOInterface;
+import edu.byu.cs.tweeter.server.service.dao.DAOFactory;
+import edu.byu.cs.tweeter.server.service.dao.FeedDAOInterface;
+import edu.byu.cs.tweeter.server.service.dao.StoryDAOInterface;
 
 public class StatusService {
+    FeedDAOInterface feedDAO;
+    StoryDAOInterface storyDAO;
+    AuthenticationDAOInterface authDAO;
+    public StatusService(DAOFactory factory) {
+        this.feedDAO = factory.getFeedDAO();
+        this.storyDAO = factory.getStoryDAO();
+        this.authDAO = factory.getAuthDAO();
+    }
     public FeedResponse getFeed(FeedRequest request) {
         if(request.getUserAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a user alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getStatusDAO().getFeed(request);
+        return feedDAO.getFeed(request);
     }
 
     public StoryResponse getStory(StoryRequest request) {
@@ -24,7 +35,7 @@ public class StatusService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getStatusDAO().getStory(request);
+        return storyDAO.getStory(request);
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request) {
@@ -34,10 +45,5 @@ public class StatusService {
             throw new RuntimeException("[Bad Request] Missing an authToken");
         }
         return new PostStatusResponse();
-    }
-
-
-    StatusDAO getStatusDAO() {
-        return new StatusDAO();
     }
 }

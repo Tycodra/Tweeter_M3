@@ -7,10 +7,10 @@ import edu.byu.cs.tweeter.model.net.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
 import edu.byu.cs.tweeter.server.service.UserService;
 
-public class LogoutHandler implements RequestHandler<LogoutRequest, LogoutResponse> {
+public class LogoutHandler extends BaseHandler implements RequestHandler<LogoutRequest, LogoutResponse> {
     @Override
     public LogoutResponse handleRequest(LogoutRequest request, Context context) {
-        UserService service = new UserService();
-        return service.logout(request);
+        UserService userService = new UserService(getFactory());
+        return userService.logout(request);
     }
 }

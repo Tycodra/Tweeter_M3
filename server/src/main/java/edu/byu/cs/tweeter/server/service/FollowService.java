@@ -16,13 +16,24 @@ import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.server.service.dao.AuthenticationDAOInterface;
+import edu.byu.cs.tweeter.server.service.dao.DAOFactory;
 import edu.byu.cs.tweeter.server.service.dao.FollowDAO;
+import edu.byu.cs.tweeter.server.service.dao.FollowDAOInterface;
+import edu.byu.cs.tweeter.server.service.dao.UserDAOInterface;
 
 /**
  * Contains the business logic for getting the users a user is following.
  */
 public class FollowService {
-
+    private FollowDAOInterface followDAO;
+    private UserDAOInterface userDAO;
+    private AuthenticationDAOInterface authDAO;
+    public FollowService(DAOFactory factory) {
+        this.followDAO = factory.getFollowDAO();
+        this.userDAO = factory.getUserDAO();
+        this.authDAO = factory.getAuthDAO();
+    }
     public FollowResponse follow(FollowRequest request) {
         if (request.getAuthToken() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have an authToken");
@@ -49,7 +60,7 @@ public class FollowService {
         } else if (request.getAuthToken() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have an authToken");
         }
-        boolean isFollower = new Random().nextBoolean();
+        boolean isFollower = followDAO.isFollower(request);
 
         return new IsFollowerResponse(isFollower);
     }
@@ -68,7 +79,7 @@ public class FollowService {
         } else if(request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getFollowDAO().getFollowees(request);
+        return followDAO.getFollowees(request);
     }
 
     public FollowersResponse getFollowers(FollowersRequest request) {
@@ -77,30 +88,22 @@ public class FollowService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getFollowDAO().getFollowers(request);
+        return followDAO.getFollowers(request);
     }
 
     public FollowingCountResponse getFollowingCount(FollowingCountRequest request) {
         if (request.getTargetUser() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a targetUser alias");
         }
-        return getFollowDAO().getFollowingCount(request.getTargetUser());
+        int followingCount = followDAO.getFollowingCount(request.getTargetUser());
+        return new FollowingCountResponse(followingCount);
     }
 
     public FollowersCountResponse getFollowersCount(FollowersCountRequest request) {
         if (request.getTargetUser() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a targetUser alias");
         }
-        return getFollowDAO().getFollowerCount(request.getTargetUser());
-    }
-    /**
-     * Returns an instance of {@link FollowDAO}. Allows mocking of the FollowDAO class
-     * for testing purposes. All usages of FollowDAO should get their FollowDAO
-     * instance from this method to allow for mocking of the instance.
-     *
-     * @return the instance.
-     */
-    FollowDAO getFollowDAO() {
-        return new FollowDAO();
+        int followerCount = followDAO.getFollowersCount(request.getTargetUser());
+        return new FollowersCountResponse(followerCount);
     }
 }
