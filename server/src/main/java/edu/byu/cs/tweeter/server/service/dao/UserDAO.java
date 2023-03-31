@@ -15,9 +15,9 @@ public class UserDAO implements UserDAOInterface{
         table = enhancedClient.table(tableName, TableSchema.fromBean(UserBean.class));
     }
 
-    public User getUser(String targetUserHandle) {
+    public User getUser(String targetUsername) {
         Key key = Key.builder()
-                .partitionValue(targetUserHandle)
+                .partitionValue(targetUsername)
                 .build();
         UserBean userBean = table.getItem(key);
         User user;
@@ -68,6 +68,60 @@ public class UserDAO implements UserDAOInterface{
                 userBean.getLastName(),
                 userBean.getUsername(),
                 tempImageUrl);
+    }
+
+    @Override
+    public int getNumberFollowers(String username) {
+        Key key = Key.builder().partitionValue(username).build();
+        UserBean userBean = table.getItem(key);
+        if (userBean != null) {
+            return userBean.getNumberFollowers();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getNumberFollowees(String username) {
+        Key key = Key.builder().partitionValue(username).build();
+        UserBean userBean = table.getItem(key);
+        if (userBean != null) {
+            return userBean.getNumberFollowees();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public void updateNumberFollowers(String username, boolean increase) {
+        Key key = Key.builder().partitionValue(username).build();
+        UserBean userBean = table.getItem(key);
+        if (userBean != null) {
+            int currentCount = userBean.getNumberFollowers();
+            if (increase) {
+                userBean.setNumberFollowers(currentCount + 1);
+                table.putItem(userBean);
+            } else { // decreasing
+                userBean.setNumberFollowers(currentCount - 1);
+                table.putItem(userBean);
+            }
+        }
+    }
+
+    @Override
+    public void updateNumberFollowees(String username, boolean increase) {
+        Key key = Key.builder().partitionValue(username).build();
+        UserBean userBean = table.getItem(key);
+        if (userBean != null) {
+            int currentCount = userBean.getNumberFollowees();
+            if (increase) {
+                userBean.setNumberFollowees(currentCount + 1);
+                table.updateItem(userBean);
+            } else { // decreasing
+                userBean.setNumberFollowees(currentCount - 1);
+                table.updateItem(userBean);
+            }
+        }
     }
 
     /**

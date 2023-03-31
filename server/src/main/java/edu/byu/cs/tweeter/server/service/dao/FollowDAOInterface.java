@@ -1,16 +1,31 @@
 package edu.byu.cs.tweeter.server.service.dao;
 
+import java.util.List;
+
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.FolloweesResponse;
+import edu.byu.cs.tweeter.server.service.Dynamos.DataPage;
+import edu.byu.cs.tweeter.server.service.Dynamos.FollowsBean;
+import edu.byu.cs.tweeter.util.Pair;
 
 public interface FollowDAOInterface {
-    FollowingResponse getFollowees(FollowingRequest request);
-    FollowersResponse getFollowers(FollowersRequest request);
-    int getFollowingCount(User targetUser);
-    int getFollowersCount(User targetUser);
-    boolean isFollower(IsFollowerRequest request);
+    Pair<List<User>, Boolean> getFollowees(
+            String followerUsername,
+            int pageLimit,
+            String lastFolloweeUsername);
+    Pair<List<User>, Boolean> getFollowers(
+            String followeeUsername,
+            int pageLimit,
+            String lastFollowerUsername);
+
+    boolean isFollower(
+            String followerUsername,
+            String followeeUsername);
+    void addFollow(User follower, User followee);
+    void removeFollow(
+            String followerUsername,
+            String followeeUsername);
 }

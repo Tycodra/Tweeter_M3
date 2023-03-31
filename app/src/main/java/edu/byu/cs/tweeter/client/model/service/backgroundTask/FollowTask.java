@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.client.model.service.backgroundTask;
 import android.os.Handler;
 import android.util.Log;
 
+import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowRequest;
@@ -27,7 +28,8 @@ public class FollowTask extends AuthenticatedTask {
     @Override
     protected void runTask() throws Exception {
         try {
-            FollowRequest request = new FollowRequest(followee, getAuthToken());
+            User currentUser = Cache.getInstance().getCurrUser();
+            FollowRequest request = new FollowRequest(currentUser, followee, getAuthToken());
             FollowResponse response = getServerFacade().follow(request, URL_PATH);
 
             if (response.isSuccess()) {

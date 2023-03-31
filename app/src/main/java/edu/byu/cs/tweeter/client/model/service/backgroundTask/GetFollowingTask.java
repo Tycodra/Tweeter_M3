@@ -7,8 +7,8 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.request.FolloweesRequest;
+import edu.byu.cs.tweeter.model.net.response.FolloweesResponse;
 import edu.byu.cs.tweeter.util.Pair;
 
 /**
@@ -28,8 +28,8 @@ public class GetFollowingTask extends PagedUserTask {
             String targetUserAlias = getTargetUser() == null ? null : getTargetUser().getAlias();
             String lastFolloweeAlias = getLastItem() == null ? null : getLastItem().getAlias();
 
-            FollowingRequest request = new FollowingRequest(getAuthToken(), targetUserAlias, getLimit(), lastFolloweeAlias);
-            FollowingResponse response = getServerFacade().getFollowees(request, URL_PATH);
+            FolloweesRequest request = new FolloweesRequest(getAuthToken(), targetUserAlias, getLimit(), lastFolloweeAlias);
+            FolloweesResponse response = getServerFacade().getFollowees(request, URL_PATH);
 
             if (response.isSuccess()) {
                 return new Pair<>(response.getFollowees(), response.getHasMorePages());

@@ -7,8 +7,8 @@ import edu.byu.cs.tweeter.model.net.request.FeedRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
-import edu.byu.cs.tweeter.model.net.request.FollowingCountRequest;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.request.FolloweesCountRequest;
+import edu.byu.cs.tweeter.model.net.request.FolloweesRequest;
 import edu.byu.cs.tweeter.model.net.request.GetUserRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
@@ -21,8 +21,8 @@ import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.FolloweesCountResponse;
+import edu.byu.cs.tweeter.model.net.response.FolloweesResponse;
 import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
@@ -74,9 +74,9 @@ public class ServerFacade {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public FollowingResponse getFollowees(FollowingRequest request, String urlPath)
+    public FolloweesResponse getFollowees(FolloweesRequest request, String urlPath)
             throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, FollowingResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, FolloweesResponse.class);
     }
 
     public FollowersResponse getFollowers(FollowersRequest request, String urlPath)
@@ -87,9 +87,9 @@ public class ServerFacade {
         throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, IsFollowerResponse.class);
     }
-    public FollowingCountResponse getFollowingCount(FollowingCountRequest request, String urlPath)
+    public FolloweesCountResponse getFollowingCount(FolloweesCountRequest request, String urlPath)
         throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, FollowingCountResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, FolloweesCountResponse.class);
     }
     public FollowersCountResponse getFollowersCount(FollowersCountRequest request, String urlPath)
         throws IOException, TweeterRemoteException {
