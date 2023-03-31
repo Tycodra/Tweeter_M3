@@ -6,9 +6,20 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.net.request.StoryRequest;
 import edu.byu.cs.tweeter.model.net.response.StoryResponse;
+import edu.byu.cs.tweeter.server.service.Dynamos.StoryBean;
 import edu.byu.cs.tweeter.util.FakeData;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 public class StoryDAO implements StoryDAOInterface{
+    private static final String tableName = "Tweeter_Story";
+    private DynamoDbTable<StoryBean> table;
+
+    public StoryDAO(DynamoDbEnhancedClient enhancedClient) {
+        table = enhancedClient.table(tableName, TableSchema.fromBean(StoryBean.class));
+    }
+
     public StoryResponse getStory(StoryRequest request) {
         assert request.getLimit() > 0;
         assert request.getUserAlias() != null;

@@ -1,5 +1,10 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.GetUserRequest;
@@ -13,7 +18,6 @@ import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
 import edu.byu.cs.tweeter.server.service.dao.AuthenticationDAOInterface;
 import edu.byu.cs.tweeter.server.service.dao.DAOFactory;
 import edu.byu.cs.tweeter.server.service.dao.UserDAOInterface;
-import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
     private AuthenticationDAOInterface authDAO;
@@ -30,10 +34,29 @@ public class UserService {
             throw new RuntimeException("[Bad Request] Missing a password");
         }
 
-        // TODO: Generates dummy data. Replace with a real implementation.
+        String hashedPassword;
+        try {
+            hashedPassword = hashPassword(request.getPassword(), request.getUsername());
+        } catch (NoSuchAlgorithmException ex) {
+            return new LoginResponse("[Server Error] unable to verify password");
+        }
+
+        if (!userDAO.verifyLogin(request.getUsername(), hashedPassword)) {
+            return new LoginResponse("Invalid username or password");
+        }
+
         User user = userDAO.getUser(request.getUsername());
-        AuthToken authToken = authDAO.getAuthToken();
-        return new LoginResponse(user, authToken);
+
+        try {
+            String token = generateAuthToken(request.getUsername(), request.getPassword());
+            long timestamp = System.currentTimeMillis();
+
+            AuthToken authToken = authDAO.addAuthToken(token, timestamp);
+
+            return new LoginResponse(user, authToken);
+        } catch (NoSuchAlgorithmException ex) {
+            return new LoginResponse("[Server Error] unable to establish session token");
+        }
     }
 
     public RegisterResponse register(RegisterRequest request) {
@@ -49,15 +72,44 @@ public class UserService {
             throw new RuntimeException("[Bad Request] Missing an image");
         }
 
-        User user = userDAO.getUser(request.getUsername());
-        AuthToken authToken = authDAO.getAuthToken();
-        return new RegisterResponse(user, authToken);
+        if (!userDAO.verifyUsernameAvailability(request.getUsername())) {
+            return new RegisterResponse("Username already taken");
+        }
+
+        String hashedPassword;
+        try {
+            hashedPassword = hashPassword(request.getPassword(), request.getUsername());
+        } catch (NoSuchAlgorithmException ex) {
+            return new RegisterResponse("[Server Error] unable to verify password");
+        }
+
+        User user = userDAO.registerUser(request.getUsername(),
+                hashedPassword,
+                request.getFirstName(),
+                request.getLastName(),
+                request.getImage(),
+                0,
+                0);
+
+        try {
+            String token = generateAuthToken(request.getUsername(), request.getPassword());
+            long timestamp = System.currentTimeMillis();
+
+            AuthToken authToken = authDAO.addAuthToken(token, timestamp);
+
+            return new RegisterResponse(user, authToken);
+        } catch (NoSuchAlgorithmException ex) {
+            return new RegisterResponse("[Server Error] unable to establish session token");
+        }
     }
 
     public LogoutResponse logout(LogoutRequest request) {
+        System.out.println("In logout");
         if (request.getAuthToken() == null) {
+            System.out.println("Missing an authToken in logout");
             throw new RuntimeException("[Bad Request] Missing an authToken");
         }
+        authDAO.removeAuthToken(request.getAuthToken().getToken());
         return new LogoutResponse();
     }
 
@@ -67,5 +119,26 @@ public class UserService {
         }
         User user = userDAO.getUser(request.getUsername());
         return new GetUserResponse(user);
+    }
+
+    private String generateAuthToken(String username, String password) throws NoSuchAlgorithmException{
+        String saltedToken = username + password;
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(saltedToken.getBytes(StandardCharsets.UTF_8));
+        return convertToHex(md.digest());
+    }
+    private String hashPassword(String password, String username) throws NoSuchAlgorithmException {
+        String saltedPassword = password + username;
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(saltedPassword.getBytes(StandardCharsets.UTF_8));
+        return convertToHex(md.digest());
+    }
+    private String convertToHex(byte[] messageDigest) {
+        BigInteger bigint = new BigInteger(1, messageDigest);
+        String hexText = bigint.toString(16);
+        while(hexText.length() < 32) {
+            hexText = "0".concat(hexText);
+        }
+        return hexText;
     }
 }

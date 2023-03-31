@@ -1,33 +1,63 @@
 DynamoDB tables
 1. User
-    * Partition key: username / alias
+    * Name: Tweeter_User
+    * Partition key: username: String
     * Sort key: none
-    * Values: User?, number_followers, number_followees
-    * Services: UserService
+    * Values:   username,
+                password: hashed,
+                firstName,
+                lastName,
+                imageUrl,
+                numberFollowers,
+                numberFollowees
+    * Services: UserService, FollowService
 
 2. AuthToken
-    * Partition key: auth_token
+    * Name: Tweeter_Auth
+    * Partition key: authToken: String
     * Sort key: none
-    * Values: auth_token, time_last_used
+    * Values:   authToken,
+                timestamp
     * Services: FollowService, StatusService, UserService
 
 3. Follows
-    * Partition key: follower_alias
-    * Sort key: followee_alias
-    * Index: reverse the partition and sort keys
-    * Values: follower_handle, follower_name, follower_image_url, followee_handle, followee_name, followee_image_url
+    * Name: Tweeter_Follows
+    * Partition key: followerUsername: String
+    * Sort key: followeeUsername: String
+    * Index: followee-follower-index
+        * Partition key: followeeUsername
+        * Sort key: followerUsername
+    * Values:   followerUsername,
+                followerFirstName,
+                followerLastName,
+                followerImageUrl,
+                followeeUsername,
+                followeeFirstName,
+                followeeLastName,
+                followeeImageUrl
     * Services: FollowService
 
 4. Story
-    * Partition key: author_alias
-    * Sort key: timestamp
-    * Values: author_alias, timestamp, Status?
+    * Name: Tweeter_Story
+    * Partition key: authorUsername: String
+    * Sort key: timestamp: Number
+    * Values:   authorUsername,
+                timestamp,
+                post,
+                urls: List<String>?,
+                mentions: List<String>?
     * Services: StatusService
 
 5. Feed
-    * Partition key: alias
-    * Sort key: timestamp
-    * Values: alias, timestamp, Status?
+    * Name: Tweeter_Feed
+    * Partition key: username: String
+    * Sort key: timestamp: Number
+    * Values:   username,
+                authorUsername,
+                timestamp,
+                post,
+                urls: List<String>?,
+                mentions: List<String>?
     * Services: StatusService
 
 

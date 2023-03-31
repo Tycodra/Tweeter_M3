@@ -14,6 +14,7 @@ import edu.byu.cs.tweeter.server.service.UserService;
 public class LoginHandler extends BaseHandler implements RequestHandler<LoginRequest, LoginResponse> {
     @Override
     public LoginResponse handleRequest(LoginRequest loginRequest, Context context) {
+        System.out.println(loginRequest.getUsername());
         UserService userService = new UserService(getFactory());
         return userService.login(loginRequest);
     }

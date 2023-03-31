@@ -8,17 +8,27 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
-import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.server.service.Dynamos.FollowsBean;
 import edu.byu.cs.tweeter.util.FakeData;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * A DAO for accessing 'following' data from the database.
  */
 public class FollowDAO implements FollowDAOInterface {
+    private static final String tableName = "Tweeter_Follows";
+    private static final String indexName = "followee-follower-index";
+    private DynamoDbTable<FollowsBean> table;
+
+    public FollowDAO(DynamoDbEnhancedClient enhancedClient) {
+        table = enhancedClient.table(tableName, TableSchema.fromBean(FollowsBean.class));
+    }
 
     /**
      * Gets the count of users from the database that the user specified is following. The
