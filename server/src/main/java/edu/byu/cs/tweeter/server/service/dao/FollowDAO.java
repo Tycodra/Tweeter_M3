@@ -73,7 +73,7 @@ public class FollowDAO implements FollowDAOInterface {
         pages.stream()
                 .limit(1)
                 .forEach((Page<FollowsBean> page) -> {
-                    result.setHasMorePages(((Page<?>) page).lastEvaluatedKey() != null);
+                    result.setHasMorePages(page.lastEvaluatedKey() != null);
                     page.items().forEach(follow -> result.getValues().add(follow));
                 });
 
@@ -83,7 +83,7 @@ public class FollowDAO implements FollowDAOInterface {
                     follow.getFolloweeFirstName(),
                     follow.getFolloweeLastName(),
                     follow.getFolloweeUsername(),
-                    follow.getFollowerImageUrl()));
+                    follow.getFolloweeImageUrl()));
         }
         boolean hasMorePage = result.hasMorePages();
 
@@ -140,17 +140,17 @@ public class FollowDAO implements FollowDAOInterface {
                     page.items().forEach(follow -> result.getValues().add(follow));
                 });
 
-        List<User> followeeUsers = new ArrayList<>();
+        List<User> followerUsers = new ArrayList<>();
         for (FollowsBean follow : result.getValues()) {
-            followeeUsers.add(new User(
-                    follow.getFolloweeFirstName(),
-                    follow.getFolloweeLastName(),
-                    follow.getFolloweeUsername(),
+            followerUsers.add(new User(
+                    follow.getFollowerFirstName(),
+                    follow.getFollowerLastName(),
+                    follow.getFollowerUsername(),
                     follow.getFollowerImageUrl()));
         }
         boolean hasMorePage = result.hasMorePages();
 
-        return new Pair<>(followeeUsers, hasMorePage);
+        return new Pair<>(followerUsers, hasMorePage);
 
 //        List<User> allFollowers = getDummyFollowers();
 //        List<User> responseFollowers = new ArrayList<>(request.getLimit());
