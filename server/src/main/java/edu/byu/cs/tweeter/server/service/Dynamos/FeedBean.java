@@ -9,6 +9,11 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @DynamoDbBean
 public class FeedBean {
     private String username;
+
+    private String posterUsername;
+    private String posterFirstName;
+    private String posterLastName;
+    private String posterImageURL;
     private long timestamp;
     private String post;
     private List<String> urls;
@@ -22,7 +27,13 @@ public class FeedBean {
     public void setUsername(String username) {
         this.username = username;
     }
+    public String getPosterUsername() {
+        return posterUsername;
+    }
 
+    public void setPosterUsername(String posterUsername) {
+        this.posterUsername = posterUsername;
+    }
     @DynamoDbSortKey
     public long getTimestamp() {
         return timestamp;
@@ -54,5 +65,29 @@ public class FeedBean {
 
     public void setMentions(List<String> mentions) {
         this.mentions = mentions;
+    }
+
+    public String getPosterFirstName() {
+        return posterFirstName;
+    }
+
+    public void setPosterFirstName(String posterFirstName) {
+        this.posterFirstName = posterFirstName;
+    }
+
+    public String getPosterLastName() {
+        return posterLastName;
+    }
+
+    public void setPosterLastName(String posterLastName) {
+        this.posterLastName = posterLastName;
+    }
+
+    public String getPosterImageURL() {
+        return posterImageURL;
+    }
+
+    public void setPosterImageURL(String posterImageURL) {
+        this.posterImageURL = posterImageURL;
     }
 }

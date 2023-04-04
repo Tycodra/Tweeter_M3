@@ -1,7 +1,5 @@
 package edu.byu.cs.tweeter.model.net.response;
 
-import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
-
 public class FollowersCountResponse extends Response {
     private int count;
 

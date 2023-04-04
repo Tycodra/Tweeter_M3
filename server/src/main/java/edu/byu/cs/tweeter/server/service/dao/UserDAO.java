@@ -2,7 +2,6 @@ package edu.byu.cs.tweeter.server.service.dao;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.server.service.Dynamos.UserBean;
-import edu.byu.cs.tweeter.util.FakeData;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -20,15 +19,10 @@ public class UserDAO implements UserDAOInterface{
                 .partitionValue(targetUsername)
                 .build();
         UserBean userBean = table.getItem(key);
-        User user;
-        if (userBean == null) {
-            user = getDummyUser();
-        } else {
-            user = new User(userBean.getFirstName(),
+        User user = new User(userBean.getFirstName(),
                     userBean.getLastName(),
                     userBean.getUsername(),
                     userBean.getImageUrl());
-        }
         return user;
     }
 
@@ -100,10 +94,10 @@ public class UserDAO implements UserDAOInterface{
             int currentCount = userBean.getNumberFollowers();
             if (increase) {
                 userBean.setNumberFollowers(currentCount + 1);
-                table.putItem(userBean);
+                table.updateItem(userBean);
             } else { // decreasing
                 userBean.setNumberFollowers(currentCount - 1);
-                table.putItem(userBean);
+                table.updateItem(userBean);
             }
         }
     }
@@ -122,24 +116,5 @@ public class UserDAO implements UserDAOInterface{
                 table.updateItem(userBean);
             }
         }
-    }
-
-    /**
-     * Returns the dummy user to be returned by the login operation.
-     * This is written as a separate method to allow mocking of the dummy user.
-     *
-     * @return a dummy user.
-     */
-    private User getDummyUser() {
-        return getFakeData().getFirstUser();
-    }
-    /**
-     * Returns the {@link FakeData} object used to generate dummy users and auth tokens.
-     * This is written as a separate method to allow mocking of the {@link FakeData}.
-     *
-     * @return a {@link FakeData} instance.
-     */
-    private FakeData getFakeData() {
-        return FakeData.getInstance();
     }
 }

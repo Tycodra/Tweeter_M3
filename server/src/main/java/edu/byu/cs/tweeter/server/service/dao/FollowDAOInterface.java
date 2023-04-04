@@ -3,12 +3,6 @@ package edu.byu.cs.tweeter.server.service.dao;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
-import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
-import edu.byu.cs.tweeter.model.net.response.FolloweesResponse;
-import edu.byu.cs.tweeter.server.service.Dynamos.DataPage;
-import edu.byu.cs.tweeter.server.service.Dynamos.FollowsBean;
 import edu.byu.cs.tweeter.util.Pair;
 
 public interface FollowDAOInterface {

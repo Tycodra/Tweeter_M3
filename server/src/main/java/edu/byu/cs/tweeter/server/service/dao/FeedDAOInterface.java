@@ -1,8 +1,11 @@
 package edu.byu.cs.tweeter.server.service.dao;
 
-import edu.byu.cs.tweeter.model.net.request.FeedRequest;
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
+import java.util.List;
+
+import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.util.Pair;
 
 public interface FeedDAOInterface {
-    FeedResponse getFeed(FeedRequest request);
+    Pair<List<Status>, Boolean> getFeed(String feedOwnerUsername, int pageLimit, Status lastStatus);
+    void addStatus(String feedOwnerUsername, Status status);
 }

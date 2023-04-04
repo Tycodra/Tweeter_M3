@@ -4,20 +4,19 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowRequest;
-import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
-import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.FolloweesCountRequest;
 import edu.byu.cs.tweeter.model.net.request.FolloweesRequest;
+import edu.byu.cs.tweeter.model.net.request.FollowersCountRequest;
+import edu.byu.cs.tweeter.model.net.request.FollowersRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.UnfollowRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.FolloweesCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FolloweesResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowersCountResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowersResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
-import edu.byu.cs.tweeter.server.service.Dynamos.DataPage;
 import edu.byu.cs.tweeter.server.service.dao.AuthenticationDAOInterface;
 import edu.byu.cs.tweeter.server.service.dao.DAOFactory;
 import edu.byu.cs.tweeter.server.service.dao.FollowDAO;
@@ -46,7 +45,9 @@ public class FollowService {
             throw new RuntimeException("[Bad Request] Request needs to have a followee");
         }
         if (authDAO.checkTokenValidity(request.getAuthToken().getToken(), System.currentTimeMillis())) {
-            followDAO.addFollow(request.getFollower(), request.getFollowee());
+            followDAO.addFollow(
+                    request.getFollower(),
+                    request.getFollowee());
             userDAO.updateNumberFollowees(request.getFollower().getAlias(), true);
             userDAO.updateNumberFollowers(request.getFollowee().getAlias(), true);
             return new FollowResponse();
