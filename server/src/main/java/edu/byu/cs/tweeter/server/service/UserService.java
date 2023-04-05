@@ -1,9 +1,17 @@
 package edu.byu.cs.tweeter.server.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -83,11 +91,30 @@ public class UserService {
             return new RegisterResponse("[Server Error] unable to verify password");
         }
 
+        AmazonS3 s3 = AmazonS3ClientBuilder
+                .standard()
+                .withRegion("us-west-2")
+                .build();
+
+        byte[] byteArray = Base64.getDecoder().decode(request.getImage());
+
+        ObjectMetadata data = new ObjectMetadata();
+
+        data.setContentLength(byteArray.length);
+
+        data.setContentType("image/jpeg");
+
+        PutObjectRequest putRequest = new PutObjectRequest("tycolax-cs340-tweeter", request.getUsername(), new ByteArrayInputStream(byteArray), data).withCannedAcl(CannedAccessControlList.PublicRead);
+
+        s3.putObject(putRequest);
+
+        String link = "https://tycolax-cs340-tweeter.s3.us-west-2.amazonaws.com/" + request.getUsername();
+
         User user = userDAO.registerUser(request.getUsername(),
                 hashedPassword,
                 request.getFirstName(),
                 request.getLastName(),
-                request.getImage(),
+                link,
                 0,
                 0);
 

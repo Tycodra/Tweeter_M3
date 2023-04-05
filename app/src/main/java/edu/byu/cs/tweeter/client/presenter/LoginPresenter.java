@@ -25,7 +25,6 @@ public class LoginPresenter extends AuthenticatePresenter implements Authenticat
     }
     @Override
     public void handleSuccess(User user, AuthToken authToken) {
-        System.out.println(user.getFirstName());
         getLoginView().authenticationSuccessful(user, authToken);
     }
     @Override

@@ -50,7 +50,7 @@ public class StoryDAO implements StoryDAOInterface{
                     AttributeValue.builder().s(lastStatusUsername).build());
             startKey.put(
                     this.timestamp,
-                    AttributeValue.builder().s(lastStatusTimestamp).build());
+                    AttributeValue.builder().n(lastStatusTimestamp).build());
             requestBuilder.exclusiveStartKey(startKey);
         }
 

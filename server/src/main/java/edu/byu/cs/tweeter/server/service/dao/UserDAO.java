@@ -44,14 +44,14 @@ public class UserDAO implements UserDAOInterface{
 
     @Override
     public User registerUser(String username, String hashedPassword, String firstName, String lastName, String imageUrl, int numberFollowers, int numberFollowees) {
-        String tempImageUrl = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
+//        String tempImageUrl = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/daisy_duck.png";
 
         UserBean userBean = new UserBean();
         userBean.setUsername(username);
         userBean.setPassword(hashedPassword);
         userBean.setFirstName(firstName);
         userBean.setLastName(lastName);
-        userBean.setImageUrl(tempImageUrl);
+        userBean.setImageUrl(imageUrl);
         userBean.setNumberFollowers(0);
         userBean.setNumberFollowees(0);
 
@@ -61,7 +61,7 @@ public class UserDAO implements UserDAOInterface{
         return new User(userBean.getFirstName(),
                 userBean.getLastName(),
                 userBean.getUsername(),
-                tempImageUrl);
+                imageUrl);
     }
 
     @Override

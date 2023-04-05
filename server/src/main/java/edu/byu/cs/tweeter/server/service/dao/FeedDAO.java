@@ -47,7 +47,7 @@ public class FeedDAO implements FeedDAOInterface{
                     AttributeValue.builder().s(lastUsername).build());
             startKey.put(
                     "timestamp",
-                    AttributeValue.builder().s(lastStatusTimestamp).build());
+                    AttributeValue.builder().n(lastStatusTimestamp).build());
             requestBuilder.exclusiveStartKey(startKey);
         }
 
