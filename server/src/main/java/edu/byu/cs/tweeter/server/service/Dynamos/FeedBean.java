@@ -9,7 +9,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @DynamoDbBean
 public class FeedBean {
     private String username;
-
     private String posterUsername;
     private String posterFirstName;
     private String posterLastName;

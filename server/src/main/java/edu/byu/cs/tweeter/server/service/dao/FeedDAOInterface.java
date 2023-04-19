@@ -8,4 +8,6 @@ import edu.byu.cs.tweeter.util.Pair;
 public interface FeedDAOInterface {
     Pair<List<Status>, Boolean> getFeed(String feedOwnerUsername, int pageLimit, Status lastStatus);
     void addStatus(String feedOwnerUsername, Status status);
+
+    void batchAddStatus(List<String> followers, Status status);
 }

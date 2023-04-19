@@ -186,4 +186,44 @@ public class FollowDAO implements FollowDAOInterface {
                     ex.getLocalizedMessage());
         }
     }
+
+    @Override
+    public Pair<List<String>, Boolean> getFollowersUsernames(String followeeUsername, int pageLimit, String lastFollowerUsername) {
+        Key key = Key.builder()
+                .partitionValue(followeeUsername)
+                .build();
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .scanIndexForward(true)
+                .limit(pageLimit);
+
+        if ((lastFollowerUsername != null) && (lastFollowerUsername.length() > 0)) {
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(this.followeeUsername, AttributeValue.builder().s(followeeUsername).build());
+            startKey.put(this.followerUsername, AttributeValue.builder().s(lastFollowerUsername).build());
+
+            requestBuilder.exclusiveStartKey(startKey);
+        }
+
+        QueryEnhancedRequest request = requestBuilder.build();
+
+        DataPage<FollowsBean> result = new DataPage<>();
+
+        SdkIterable<Page<FollowsBean>> sdkIterable = index.query(request);
+        PageIterable<FollowsBean> pages = PageIterable.create(sdkIterable);
+        pages.stream()
+                .limit(1)
+                .forEach((Page<FollowsBean> page) -> {
+                    result.setHasMorePages(page.lastEvaluatedKey() != null);
+                    page.items().forEach(follow -> result.getValues().add(follow));
+                });
+
+        List<String> followerUsernames = new ArrayList<>();
+        for (FollowsBean follow : result.getValues()) {
+            followerUsernames.add(follow.getFollowerUsername());
+        }
+        boolean hasMorePage = result.hasMorePages();
+
+        return new Pair<>(followerUsernames, hasMorePage);
+    }
 }

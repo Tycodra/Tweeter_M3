@@ -47,7 +47,7 @@ public class AuthenticationDAO implements AuthenticationDAOInterface{
                 .partitionValue(authToken)
                 .build();
         AuthBean authBean = table.getItem(key);
-        if ((timestamp - authBean.getTimestamp()) < 60000) {
+        if ((timestamp - authBean.getTimestamp()) < 300000) {
             authBean.setTimestamp(timestamp);
             table.updateItem(authBean);
             return true;

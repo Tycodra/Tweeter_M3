@@ -81,9 +81,11 @@ public class MainPresenter extends BasePresenter{
     public class PostStatusObserver extends BasePresenter implements StringNotificationObserver {
         public PostStatusObserver(MainView view) {
             super(view);
+            System.out.println("Intializing the PostStatusObserver");
         }
         @Override
         public void handleSuccess(String message) {
+            System.out.println("*****************************************************");
             getMainView().displayMessage(message);
         }
         @Override

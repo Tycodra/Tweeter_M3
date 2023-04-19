@@ -22,4 +22,8 @@ public interface FollowDAOInterface {
     void removeFollow(
             String followerUsername,
             String followeeUsername);
+    Pair<List<String>, Boolean> getFollowersUsernames(
+            String followeeUsername,
+            int pageLimit,
+            String lastFollowerUsername);
 }

@@ -14,17 +14,23 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
 import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
 public class FeedDAO implements FeedDAOInterface{
     private static final String tableName = "Tweeter_Feed";
-    private DynamoDbTable<FeedBean> table;
+    private final DynamoDbTable<FeedBean> table;
+    DynamoDbEnhancedClient enhancedClient;
 
     public FeedDAO(DynamoDbEnhancedClient enhancedClient) {
+        this.enhancedClient = enhancedClient;
         table = enhancedClient.table(tableName, TableSchema.fromBean(FeedBean.class));
     }
 
@@ -38,13 +44,12 @@ public class FeedDAO implements FeedDAOInterface{
                 .scanIndexForward(false)
                 .limit(pageLimit);
         if (lastStatus != null) {
-            String lastUsername = feedOwnerUsername;
             String lastStatusTimestamp = String.valueOf(lastStatus.getTimestamp());
 
             Map<String, AttributeValue> startKey = new HashMap<>();
             startKey.put(
                     "username",
-                    AttributeValue.builder().s(lastUsername).build());
+                    AttributeValue.builder().s(feedOwnerUsername).build());
             startKey.put(
                     "timestamp",
                     AttributeValue.builder().n(lastStatusTimestamp).build());
@@ -93,5 +98,77 @@ public class FeedDAO implements FeedDAOInterface{
         feedBean.setMentions(newStatus.getMentions());
 
         table.putItem(feedBean);
+    }
+
+    @Override
+    public void batchAddStatus(List<String> followers, Status status) {
+        WriteBatch.Builder<FeedBean> feedWriteBuilder = WriteBatch
+                .builder(FeedBean.class)
+                .mappedTableResource(table);
+
+        List<String> troubleFollowers = new ArrayList<>();
+
+        String posterUsername = status.getUser().getAlias();
+        String posterFirstName = status.getUser().getFirstName();
+        String posterLastName = status.getUser().getLastName();
+        String posterImageUrl = status.getUser().getImageUrl();
+        String post = status.getPost();
+        long timestamp = status.getTimestamp();
+        List<String> mentions = status.getMentions();
+        List<String> urls = status.getUrls();
+        int counter = 0;
+
+        for (String followerUsername : followers) {
+
+            FeedBean feedBean = new FeedBean();
+            feedBean.setUsername(followerUsername);
+            feedBean.setPosterUsername(posterUsername);
+            feedBean.setPosterFirstName(posterFirstName);
+            feedBean.setPosterLastName(posterLastName);
+            feedBean.setPosterImageURL(posterImageUrl);
+            feedBean.setPost(post);
+            feedBean.setTimestamp(timestamp);
+            feedBean.setMentions(mentions);
+            feedBean.setUrls(urls);
+
+            feedWriteBuilder.addPutItem(builder -> builder.item(feedBean));
+            counter += 1;
+
+            if (counter == 16) {
+                troubleFollowers.addAll(addBatch(feedWriteBuilder));
+                feedWriteBuilder = WriteBatch.builder(FeedBean.class)
+                        .mappedTableResource(table);
+                counter = 0;
+            }
+        }
+        if (counter > 0) {
+            troubleFollowers.addAll(addBatch(feedWriteBuilder));
+        }
+
+        if (troubleFollowers.size() > 0) {
+            System.out.println("***************** " + troubleFollowers.size() + " feeds were not updated with the rest**********");
+            batchAddStatus(troubleFollowers, status);
+        }
+    }
+
+    private List<String> addBatch(WriteBatch.Builder<FeedBean> feedWriteBuilder) {
+        List<String> troubleFollowers = new ArrayList<>();
+        BatchWriteItemEnhancedRequest batchWriteItemEnhancedRequest = BatchWriteItemEnhancedRequest.builder()
+                .writeBatches(feedWriteBuilder.build()).build();
+
+        try {
+            BatchWriteResult feedResult = enhancedClient.batchWriteItem(batchWriteItemEnhancedRequest);
+            // just hammer dynamodb again with anything that didn't get written this time
+            if (feedResult.unprocessedPutItemsForTable(table).size() > 0) {
+                for (FeedBean feedBean : feedResult.unprocessedPutItemsForTable(table)) {
+                    troubleFollowers.add(feedBean.getUsername());
+                }
+            }
+
+        } catch (DynamoDbException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        return troubleFollowers;
     }
 }

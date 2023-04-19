@@ -65,3 +65,12 @@ DAOs CAN connect to multiple tables
 DAOs CANNOT connect to other DAOs
 Services CAN have multiple DAOs
 
+DynamoDB RCU when running: 10
+DynamoDB WCU when running: 100
+
+Turn these back down when not running the test.
+
+The timeouts on the lambdas should be around 30
+
+new lambdas implement RequestHandler<SQSEvent, void>
+
